@@ -1,6 +1,6 @@
 {
   "name": "SHL Controller Firmware",
-  "version": "SHL-2.0.4",
+  "version": "SHL-2.0.5",
   "new_install_prompt_erase": true,
   "new_install_improv_wait_time": 0,
   "builds": [
