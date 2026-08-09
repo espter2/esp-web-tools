@@ -1,4 +1,67 @@
-# ESP Web Tools
+# SHL Controller Firmware Installer
+
+Browser-based production firmware installer for 16 MB SHL ESP32 controllers.
+On Windows, technicians only need Microsoft Edge or Google Chrome and a
+data-capable USB cable. VS Code, PlatformIO, Python, and esptool are not needed
+on the flashing PC.
+
+## Use on Windows
+
+1. Open the deployed HTTPS installer in Microsoft Edge or Google Chrome.
+2. Connect one controller using a data-capable USB cable.
+3. Select **Install firmware** and choose the controller's COM port.
+4. Select **Install** and keep the cable connected until installation finishes.
+
+If the controller cannot be initialized, close applications that may have the
+COM port open. Hold the controller's BOOT button while starting installation,
+then release it when writing begins.
+
+The site must be served through HTTPS (or localhost during development). It
+will not flash when `index.html` is opened directly from the Windows filesystem.
+
+## Packaged release
+
+The current package is production firmware `SHL-2.0.4` for classic ESP32:
+
+| File                      | Flash offset |
+| ------------------------- | -----------: |
+| `firmware/bootloader.bin` |     `0x1000` |
+| `firmware/partitions.bin` |     `0x8000` |
+| `firmware/boot_app0.bin`  |     `0xE000` |
+| `firmware/firmware.bin`   |    `0x10000` |
+
+The manifest is `firmware/manifest.json`. Its files and offsets must be kept in
+sync with the `esp32dev` PlatformIO environment in the SHL firmware repository.
+
+## Build and preview
+
+Install dependencies and compile the self-contained web bundle:
+
+```sh
+npm ci
+script/build
+```
+
+Preview from the repository root:
+
+```sh
+python3 -m http.server 8000
+```
+
+Then open `http://localhost:8000`. For production, publish the contents of this
+repository to an HTTPS static host. The compiled `dist/web` directory is part of
+the deployable site.
+
+## Updating the firmware
+
+1. Build the production `esp32dev` environment in the SHL firmware repository.
+2. Copy its matching application and partition binaries into `firmware/`.
+3. Package the DOUT/40 MHz bootloader and matching Arduino `boot_app0.bin`.
+4. Update the version in `firmware/manifest.json` and `index.html`.
+5. Run `script/build`, preview the site, and test-flash a controller before
+   publishing.
+
+## Upstream project
 
 Allow flashing ESPHome or other ESP-based firmwares via the browser. Will automatically detect the board type and select a supported firmware. [See website for full documentation.](https://esphome.github.io/esp-web-tools/)
 
@@ -55,9 +118,7 @@ Example manifest:
     },
     {
       "chipFamily": "ESP8266",
-      "parts": [
-        { "path": "esp8266.bin", "offset": 0 }
-      ]
+      "parts": [{ "path": "esp8266.bin", "offset": 0 }]
     }
   ]
 }

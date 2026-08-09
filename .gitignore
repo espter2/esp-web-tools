@@ -1,2 +1,3 @@
-dist
+# The compiled web bundle is committed because this repository is deployed as
+# a self-contained static firmware installer.
 node_modules
