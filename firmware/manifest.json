@@ -3,11 +3,6 @@
   "version": "SHL-2.0.6",
   "new_install_prompt_erase": true,
   "new_install_improv_wait_time": 0,
-  "post_install_check": {
-    "expected_text": "OK - WLED vSHL-2.0.6",
-    "timeout": 15,
-    "baud_rate": 115200
-  },
   "builds": [
     {
       "chipFamily": "ESP32",
