@@ -12,10 +12,11 @@ on the flashing PC.
 3. Select **Install firmware** and choose the controller's COM port.
 4. Select **Install** and keep the cable connected until installation finishes.
 
-After writing, the installer automatically restarts the controller and watches
-for the firmware startup signature. A verified message confirms that the new
-firmware booted. If the check is inconclusive, the flash is still reported as
-complete and the technician is prompted to reset the controller before use.
+After writing, select **Start check** and then press the controller's physical
+RESET button when prompted. The installer watches for the firmware startup
+signature and displays a verified message when the new firmware boots. If the
+check is inconclusive, the flash is still reported as complete and the check can
+be retried or skipped.
 
 If the controller cannot be initialized, close applications that may have the
 COM port open. Hold the controller's BOOT button while starting installation,

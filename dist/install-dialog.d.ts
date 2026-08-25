@@ -54,6 +54,7 @@ export declare class EwtInstallDialog extends LitElement {
     private _initialize;
     private _startInstall;
     private _confirmInstall;
+    private _startPostInstallVerification;
     private _verifyInstalledFirmware;
     private _doProvision;
     private _handleDisconnect;

@@ -555,6 +555,7 @@ export class EwtInstallDialog extends LitElement {
             // until Improv is initialized / not detected.
             (this._installState.state === "finished" /* FlashStateType.FINISHED */ &&
                 this._client === undefined &&
+                this._verificationState !== "waiting_for_reset" &&
                 this._verificationState !== "checking")) {
             heading = "Installing";
             let percentage;
@@ -582,10 +583,37 @@ export class EwtInstallDialog extends LitElement {
         `, percentage);
         }
         else if (this._installState.state === "finished" /* FlashStateType.FINISHED */ &&
+            this._verificationState === "waiting_for_reset") {
+            heading = "Verify installation";
+            content = html `
+        <div slot="content">
+          <p>The firmware was written successfully.</p>
+          <p>
+            Select <strong>Start check</strong>, then press the physical RESET
+            button on the controller when prompted.
+          </p>
+        </div>
+        <div slot="actions">
+          <ew-text-button
+            @click=${() => {
+                this._verificationState = "inconclusive";
+                this._client = null;
+            }}
+          >
+            Skip
+          </ew-text-button>
+          <ew-text-button @click=${this._startPostInstallVerification}>
+            Start check
+          </ew-text-button>
+        </div>
+      `;
+        }
+        else if (this._installState.state === "finished" /* FlashStateType.FINISHED */ &&
             this._verificationState === "checking") {
             heading = "Checking installation";
             content = this._renderProgress(html `
-        Restarting the controller and confirming that the new firmware starts
+        Press the physical RESET button on the controller now.<br /><br />
+        Waiting for the new firmware to start…
       `);
         }
         else if (this._installState.state === "finished" /* FlashStateType.FINISHED */) {
@@ -615,6 +643,11 @@ export class EwtInstallDialog extends LitElement {
                     : ""}
 
         <div slot="actions">
+          ${inconclusive
+                ? html `<ew-text-button @click=${this._startPostInstallVerification}>
+                Check again
+              </ew-text-button>`
+                : ""}
           <ew-text-button
             @click=${() => {
                 this._state =
@@ -842,7 +875,7 @@ export class EwtInstallDialog extends LitElement {
             this._installState = state;
             if (state.state === "finished" /* FlashStateType.FINISHED */) {
                 this._verificationState = this._manifest.post_install_check
-                    ? "checking"
+                    ? "waiting_for_reset"
                     : undefined;
                 sleep(100)
                     // Flashing closes the port
@@ -852,8 +885,9 @@ export class EwtInstallDialog extends LitElement {
                         baudRate: (_b = (_a = this._manifest.post_install_check) === null || _a === void 0 ? void 0 : _a.baud_rate) !== null && _b !== void 0 ? _b : 115200,
                     });
                 })
-                    .then(() => this._verifyInstalledFirmware())
-                    .then(() => this._initialize(true))
+                    .then(() => this._manifest.post_install_check
+                    ? undefined
+                    : this._initialize(true))
                     .then(() => this.requestUpdate())
                     .catch((err) => {
                     this.logger.error("Post-install verification failed.", err);
@@ -869,6 +903,20 @@ export class EwtInstallDialog extends LitElement {
             }
         }, this.port, this.manifestPath, this._manifest, this._installErase);
     }
+    async _startPostInstallVerification() {
+        this._verificationState = "checking";
+        this.requestUpdate();
+        try {
+            await this._verifyInstalledFirmware();
+            await this._initialize(true);
+        }
+        catch (err) {
+            this.logger.error("Post-install verification failed.", err);
+            this._verificationState = "inconclusive";
+            this._client = null;
+        }
+        this.requestUpdate();
+    }
     async _verifyInstalledFirmware() {
         var _a;
         const check = this._manifest.post_install_check;
@@ -881,16 +929,6 @@ export class EwtInstallDialog extends LitElement {
         let output = "";
         let timer;
         try {
-            // Reset after the serial reader is attached so the startup line is not missed.
-            await this.port.setSignals({
-                dataTerminalReady: false,
-                requestToSend: true,
-            });
-            await sleep(250);
-            await this.port.setSignals({
-                dataTerminalReady: false,
-                requestToSend: false,
-            });
             const timedOut = new Promise((resolve) => {
                 timer = setTimeout(() => resolve("timeout"), timeout);
             });
