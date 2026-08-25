@@ -19,6 +19,12 @@ export interface Manifest {
     new_install_skip_erase?: boolean;
     new_install_prompt_erase?: boolean;
     new_install_improv_wait_time?: number;
+    /** Optional serial startup check performed after a successful flash. */
+    post_install_check?: {
+        expected_text: string;
+        timeout?: number;
+        baud_rate?: number;
+    };
     builds: Build[];
 }
 export interface BaseFlashState {

@@ -554,7 +554,8 @@ export class EwtInstallDialog extends LitElement {
             // When we're finished, keep showing this screen with 100% written
             // until Improv is initialized / not detected.
             (this._installState.state === "finished" /* FlashStateType.FINISHED */ &&
-                this._client === undefined)) {
+                this._client === undefined &&
+                this._verificationState !== "checking")) {
             heading = "Installing";
             let percentage;
             let undeterminateLabel;
@@ -580,15 +581,38 @@ export class EwtInstallDialog extends LitElement {
           Keep this page visible to prevent slow down
         `, percentage);
         }
+        else if (this._installState.state === "finished" /* FlashStateType.FINISHED */ &&
+            this._verificationState === "checking") {
+            heading = "Checking installation";
+            content = this._renderProgress(html `
+        Restarting the controller and confirming that the new firmware starts
+      `);
+        }
         else if (this._installState.state === "finished" /* FlashStateType.FINISHED */) {
             heading = undefined;
             const supportsImprov = this._client !== null;
+            const verified = this._verificationState === "verified";
+            const inconclusive = this._verificationState === "inconclusive";
             content = html `
         <ewt-page-message
           slot="content"
           .icon=${OK_ICON}
-          label="Installation complete!"
+          .label=${verified
+                ? "Installation verified!"
+                : "Installation complete!"}
         ></ewt-page-message>
+
+        ${verified
+                ? html `<p slot="content">
+              The controller restarted and the new firmware responded
+              successfully.
+            </p>`
+                : inconclusive
+                    ? html `<p slot="content">
+                The firmware was written successfully, but its startup could not
+                be confirmed. Try resetting the controller before use.
+              </p>`
+                    : ""}
 
         <div slot="actions">
           <ew-text-button
@@ -807,6 +831,7 @@ export class EwtInstallDialog extends LitElement {
     async _confirmInstall() {
         this._installConfirmed = true;
         this._installState = undefined;
+        this._verificationState = undefined;
         if (this._client) {
             await this._closeClientWithoutEvents(this._client);
         }
@@ -816,11 +841,26 @@ export class EwtInstallDialog extends LitElement {
         flash((state) => {
             this._installState = state;
             if (state.state === "finished" /* FlashStateType.FINISHED */) {
+                this._verificationState = this._manifest.post_install_check
+                    ? "checking"
+                    : undefined;
                 sleep(100)
                     // Flashing closes the port
-                    .then(() => this.port.open({ baudRate: 115200 }))
+                    .then(() => {
+                    var _a, _b;
+                    return this.port.open({
+                        baudRate: (_b = (_a = this._manifest.post_install_check) === null || _a === void 0 ? void 0 : _a.baud_rate) !== null && _b !== void 0 ? _b : 115200,
+                    });
+                })
+                    .then(() => this._verifyInstalledFirmware())
                     .then(() => this._initialize(true))
-                    .then(() => this.requestUpdate());
+                    .then(() => this.requestUpdate())
+                    .catch((err) => {
+                    this.logger.error("Post-install verification failed.", err);
+                    this._verificationState = "inconclusive";
+                    this._client = null;
+                    this.requestUpdate();
+                });
             }
             else if (state.state === "error" /* FlashStateType.ERROR */) {
                 sleep(100)
@@ -828,6 +868,51 @@ export class EwtInstallDialog extends LitElement {
                     .then(() => this.port.open({ baudRate: 115200 }));
             }
         }, this.port, this.manifestPath, this._manifest, this._installErase);
+    }
+    async _verifyInstalledFirmware() {
+        var _a;
+        const check = this._manifest.post_install_check;
+        if (!check) {
+            return;
+        }
+        const reader = this.port.readable.getReader();
+        const decoder = new TextDecoder();
+        const timeout = Math.max(1, (_a = check.timeout) !== null && _a !== void 0 ? _a : 15) * 1000;
+        let output = "";
+        let timer;
+        try {
+            // Reset after the serial reader is attached so the startup line is not missed.
+            await this.port.setSignals({
+                dataTerminalReady: false,
+                requestToSend: true,
+            });
+            await sleep(250);
+            await this.port.setSignals({
+                dataTerminalReady: false,
+                requestToSend: false,
+            });
+            const timedOut = new Promise((resolve) => {
+                timer = setTimeout(() => resolve("timeout"), timeout);
+            });
+            while (!output.includes(check.expected_text)) {
+                const result = await Promise.race([reader.read(), timedOut]);
+                if (result === "timeout" || result.done) {
+                    this._verificationState = "inconclusive";
+                    return;
+                }
+                output += decoder.decode(result.value, { stream: true });
+                // Avoid retaining an unbounded amount of noisy serial output.
+                output = output.slice(-4096);
+            }
+            this._verificationState = "verified";
+        }
+        finally {
+            if (timer !== undefined) {
+                clearTimeout(timer);
+            }
+            await reader.cancel().catch(() => undefined);
+            reader.releaseLock();
+        }
     }
     async _doProvision() {
         var _a;
@@ -983,6 +1068,9 @@ __decorate([
 __decorate([
     state()
 ], EwtInstallDialog.prototype, "_installState", void 0);
+__decorate([
+    state()
+], EwtInstallDialog.prototype, "_verificationState", void 0);
 __decorate([
     state()
 ], EwtInstallDialog.prototype, "_provisionForce", void 0);

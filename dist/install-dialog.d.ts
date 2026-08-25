@@ -29,6 +29,7 @@ export declare class EwtInstallDialog extends LitElement {
     private _installErase;
     private _installConfirmed;
     private _installState?;
+    private _verificationState?;
     private _provisionForce;
     private _wasProvisioned;
     private _error?;
@@ -53,6 +54,7 @@ export declare class EwtInstallDialog extends LitElement {
     private _initialize;
     private _startInstall;
     private _confirmInstall;
+    private _verifyInstalledFirmware;
     private _doProvision;
     private _handleDisconnect;
     private _closeDialog;
