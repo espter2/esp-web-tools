@@ -21,7 +21,7 @@ will not flash when `index.html` is opened directly from the Windows filesystem.
 
 ## Packaged release
 
-The current package is production firmware `SHL-2.0.5` for classic ESP32:
+The current package is production firmware `SHL-2.0.6` for classic ESP32:
 
 | File                      | Flash offset |
 | ------------------------- | -----------: |
