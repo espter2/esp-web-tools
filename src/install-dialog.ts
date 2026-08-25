@@ -655,7 +655,7 @@ export class EwtInstallDialog extends LitElement {
       );
     } else if (this._installState.state === FlashStateType.FINISHED) {
       heading = undefined;
-      const supportsImprov = this._client !== null;
+      const shouldProvision = this._client !== null && this._installErase;
       content = html`
         <ewt-page-message
           slot="content"
@@ -664,16 +664,17 @@ export class EwtInstallDialog extends LitElement {
         ></ewt-page-message>
 
         <div slot="actions">
-          <ew-text-button
-            @click=${() => {
-              this._state =
-                supportsImprov && this._installErase
-                  ? "PROVISION"
-                  : "DASHBOARD";
-            }}
-          >
-            Next
-          </ew-text-button>
+          ${shouldProvision
+            ? html`<ew-text-button
+                @click=${() => {
+                  this._state = "PROVISION";
+                }}
+              >
+                Next
+              </ew-text-button>`
+            : html`<ew-text-button @click=${this._closeDialog}>
+                Flash another controller
+              </ew-text-button>`}
         </div>
       `;
     } else if (this._installState.state === FlashStateType.ERROR) {

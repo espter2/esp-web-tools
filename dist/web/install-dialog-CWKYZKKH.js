@@ -738,7 +738,7 @@ import{e,_ as t,o as i,s as r,x as o,i as a,n as s,t as n,r as l,a as d,T as c,b
           This will take
           ${"ESP8266"===this._installState.chipFamily?"a minute":"2 minutes"}.<br />
           Keep this page visible to prevent slow down
-        `,i)}else if("finished"===this._installState.state){e=void 0;const i=null!==this._client;t=o`
+        `,i)}else if("finished"===this._installState.state){e=void 0;const i=null!==this._client&&this._installErase;t=o`
         <ewt-page-message
           slot="content"
           .icon=${"🎉"}
@@ -746,11 +746,13 @@ import{e,_ as t,o as i,s as r,x as o,i as a,n as s,t as n,r as l,a as d,T as c,b
         ></ewt-page-message>
 
         <div slot="actions">
-          <ew-text-button
-            @click=${()=>{this._state=i&&this._installErase?"PROVISION":"DASHBOARD"}}
-          >
-            Next
-          </ew-text-button>
+          ${i?o`<ew-text-button
+                @click=${()=>{this._state="PROVISION"}}
+              >
+                Next
+              </ew-text-button>`:o`<ew-text-button @click=${this._closeDialog}>
+                Flash another controller
+              </ew-text-button>`}
         </div>
       `}else"error"===this._installState.state&&(e="Installation failed",t=o`
         <ewt-page-message

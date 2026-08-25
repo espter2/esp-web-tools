@@ -11,6 +11,8 @@ on the flashing PC.
 2. Connect one controller using a data-capable USB cable.
 3. Select **Install firmware** and choose the controller's COM port.
 4. Select **Install** and keep the cable connected until installation finishes.
+5. Select **Flash another controller**, replace the controller, and select
+   **Connect controller**. The browser does not need to be refreshed.
 
 If the controller cannot be initialized, close applications that may have the
 COM port open. Hold the controller's BOOT button while starting installation,

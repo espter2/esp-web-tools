@@ -33,8 +33,15 @@ export const connect = async (button: InstallButton) => {
   el.overrides = button.overrides;
   el.addEventListener(
     "closed",
-    () => {
-      port!.close();
+    async () => {
+      try {
+        if (port!.readable !== null || port!.writable !== null) {
+          await port!.close();
+        }
+      } catch (err) {
+        // The controller may already have been unplugged.
+        console.debug("Serial port was already closed.", err);
+      }
     },
     { once: true },
   );

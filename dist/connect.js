@@ -26,8 +26,16 @@ export const connect = async (button) => {
     el.port = port;
     el.manifestPath = button.manifest || button.getAttribute("manifest");
     el.overrides = button.overrides;
-    el.addEventListener("closed", () => {
-        port.close();
+    el.addEventListener("closed", async () => {
+        try {
+            if (port.readable !== null || port.writable !== null) {
+                await port.close();
+            }
+        }
+        catch (err) {
+            // The controller may already have been unplugged.
+            console.debug("Serial port was already closed.", err);
+        }
     }, { once: true });
     document.body.appendChild(el);
 };
