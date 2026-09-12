@@ -123,34 +123,6 @@
         content: "";
       }
 
-      esp-web-install-button {
-        --esp-tools-button-color: var(--blue);
-        --esp-tools-button-text-color: #fff;
-        --esp-tools-button-border-radius: 5px;
-      }
-
-      esp-web-install-button button[slot="activate"] {
-        min-width: 190px;
-        padding: 11px 18px;
-        border: 0;
-        border-radius: 5px;
-        color: #fff;
-        background: var(--blue);
-        cursor: pointer;
-        font: inherit;
-        font-weight: 600;
-      }
-
-      .unsupported {
-        display: block;
-        padding: 12px 14px;
-        border: 1px solid #e6b84a;
-        border-radius: 5px;
-        color: #5c4300;
-        background: #fff8e5;
-        font-style: normal;
-      }
-
       ol {
         margin: 0;
         padding-left: 22px;
@@ -200,23 +172,22 @@
           <dl class="details">
             <dt>Status</dt>
             <dd><span class="status">Ready</span></dd>
-            <dt>Firmware</dt>
-            <dd>SHL-2.0.6</dd>
+            <dt>Firmware profiles</dt>
+            <dd>
+              Standard 2.0.6 / Landscape 2.0.7 / Stock WLED 0.14.0 (4×200 SK6812
+              RGBW)
+            </dd>
             <dt>Target</dt>
             <dd>SHL ESP32 controller</dd>
             <dt>Flash size</dt>
-            <dd>16 MB</dd>
+            <dd>16 MB physical (Stock WLED uses a 4 MB layout)</dd>
           </dl>
 
-          <esp-web-install-button manifest="./firmware/manifest.json">
-            <button slot="activate">Connect controller</button>
-            <i slot="unsupported" class="unsupported">
-              Open this tool in Google Chrome or Microsoft Edge on Windows.
-            </i>
-            <i slot="not-allowed" class="unsupported">
-              Open this tool from its secure Cloudflare address.
-            </i>
-          </esp-web-install-button>
+          <shl-multi-install
+            manifest="./firmware/manifest.json"
+            landscape-manifest="./firmware/manifest-landscape.json"
+            stock-wled-manifest="./firmware/manifest-wled-0.14.0.json"
+          ></shl-multi-install>
         </div>
       </section>
 
@@ -226,14 +197,15 @@
         </div>
         <div class="panel-body">
           <ol>
-            <li>Connect one controller with a data-capable USB cable.</li>
-            <li>Select <strong>Connect controller</strong>.</li>
-            <li>Choose the controller’s COM port from the browser prompt.</li>
+            <li>Connect the powered USB hub and up to 16 controllers.</li>
             <li>
-              Select <strong>Install</strong> and wait for 100% completion.
+              Select <strong>Add controller</strong> once for each COM port.
+              Browser permission is remembered for future sessions.
             </li>
+            <li>Confirm that the expected controller count is shown.</li>
+            <li>Select <strong>Flash all</strong>.</li>
             <li>
-              Disconnect the finished controller and connect the next one.
+              Keep the hub connected until every controller shows Complete.
             </li>
           </ol>
           <p class="note">

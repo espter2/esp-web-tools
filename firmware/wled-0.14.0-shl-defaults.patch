@@ -1,0 +1,21 @@
+--- a/wled00/FX_fcn.cpp
++++ b/wled00/FX_fcn.cpp
+@@
+ #ifndef DEFAULT_LED_COLOR_ORDER
+   #define DEFAULT_LED_COLOR_ORDER COL_ORDER_GRB  //default to GRB
+ #endif
++
++#ifndef DEFAULT_LED_AWMODE
++  #define DEFAULT_LED_AWMODE RGBW_MODE_MANUAL_ONLY
++#endif
+@@
+-      BusConfig defCfg = BusConfig(DEFAULT_LED_TYPE, defPin, start, count, DEFAULT_LED_COLOR_ORDER, false, 0, RGBW_MODE_MANUAL_ONLY);
++      BusConfig defCfg = BusConfig(DEFAULT_LED_TYPE, defPin, start, count, DEFAULT_LED_COLOR_ORDER, false, 0, DEFAULT_LED_AWMODE);
+--- a/wled00/FX.h
++++ b/wled00/FX.h
+@@
+-      milliampsPerLed(55),
++#ifndef DEFAULT_LED_MILLIAMPS
++#define DEFAULT_LED_MILLIAMPS 55
++#endif
++      milliampsPerLed(DEFAULT_LED_MILLIAMPS),

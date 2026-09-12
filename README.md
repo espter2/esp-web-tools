@@ -8,11 +8,22 @@ on the flashing PC.
 ## Use on Windows
 
 1. Open the deployed HTTPS installer in Microsoft Edge or Google Chrome.
-2. Connect one controller using a data-capable USB cable.
-3. Select **Install firmware** and choose the controller's COM port.
-4. Select **Install** and keep the cable connected until installation finishes.
-5. Select **Flash another controller**, replace the controller, and select
-   **Connect controller**. The browser does not need to be refreshed.
+2. Connect a powered USB hub and up to 16 controllers using data-capable cables.
+3. Select **Add controller** once for each COM port. Chrome or Edge requires one
+   explicit permission approval for every new USB serial device.
+4. Confirm that the expected controller count is shown, then select **Flash all**.
+5. Keep the hub connected until every row shows **All done!** or an individual
+   error. Previously approved ports are detected automatically on future visits.
+6. Enter the production Wi-Fi credentials and select **Connect all to Wi-Fi**.
+7. Use **Open controller** to inspect a controller's settings, or **View logs**
+   to restart that controller and capture its USB serial output.
+
+All selected controllers are erased and flashed concurrently. Use a powered hub
+with enough current for all attached controllers; an unpowered hub can cause
+random disconnects or failed writes when many controllers operate at once.
+Wi-Fi credentials remain in the browser tab, are sent directly to each
+controller over USB using Improv Serial, and the password field is cleared when
+the batch finishes.
 
 If the controller cannot be initialized, close applications that may have the
 COM port open. Hold the controller's BOOT button while starting installation,
@@ -23,14 +34,31 @@ will not flash when `index.html` is opened directly from the Windows filesystem.
 
 ## Packaged release
 
-The current package is production firmware `SHL-2.0.6` for classic ESP32:
+The current package includes three classic ESP32 firmware profiles:
 
-| File                      | Flash offset |
-| ------------------------- | -----------: |
-| `firmware/bootloader.bin` |     `0x1000` |
-| `firmware/partitions.bin` |     `0x8000` |
-| `firmware/boot_app0.bin`  |     `0xE000` |
-| `firmware/firmware.bin`   |    `0x10000` |
+- Standard: `SHL-2.0.6` (`firmware/manifest.json`)
+- Landscape: `SHL-2.0.7` (`firmware/manifest-landscape.json`)
+- Stock WLED: `0.14.0-SHL-r2` (`firmware/manifest-wled-0.14.0.json`), preset
+  with four SK6812 RGBW outputs on GPIO 15, 16, 17, and 18; 200 LEDs per
+  output; RGB color order; Accurate automatic white calculation; and the
+  automatic brightness limiter disabled
+
+The operator selects one profile before starting a batch. The selection applies
+to all controllers in that batch. Stock WLED uses the official WLED 4 MB layout
+and is intended for the separate stock-WLED customer controllers.
+
+The Stock WLED application is built from the official WLED 0.14.0 source with
+the SHL output defaults listed above. Its boot package comes from the official
+WLED release. WLED 0.14.0 source and release details are available at
+<https://github.com/wled/WLED/releases/tag/v0.14.0>.
+
+| File                              | Flash offset |
+| --------------------------------- | -----------: |
+| `firmware/bootloader.bin`         |     `0x1000` |
+| `firmware/partitions.bin`         |     `0x8000` |
+| `firmware/boot_app0.bin`          |     `0xE000` |
+| `firmware/firmware.bin`           |    `0x10000` |
+| `firmware/firmware-landscape.bin` |    `0x10000` |
 
 The manifest is `firmware/manifest.json`. Its files and offsets must be kept in
 sync with the `esp32dev` PlatformIO environment in the SHL firmware repository.

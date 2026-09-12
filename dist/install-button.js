@@ -1,4 +1,5 @@
 import { connect } from "./connect";
+import "./multi-install";
 export class InstallButton extends HTMLElement {
     connectedCallback() {
         if (this.renderRoot) {

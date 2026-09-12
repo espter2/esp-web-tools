@@ -1,0 +1,15 @@
+{
+  "name": "Stock WLED — SHL SK6812 RGBW preset",
+  "version": "0.14.0-SHL-r2",
+  "new_install_prompt_erase": true,
+  "new_install_improv_wait_time": 0,
+  "builds": [
+    {
+      "chipFamily": "ESP32",
+      "parts": [
+        { "path": "wled-esp32-bootloader-v4.bin", "offset": 0 },
+        { "path": "firmware-wled-0.14.0-shl-r2.bin", "offset": 65536 }
+      ]
+    }
+  ]
+}

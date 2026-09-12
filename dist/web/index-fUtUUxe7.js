@@ -1,4 +1,4 @@
-import{z as e,i as t,_ as o,s as i,x as l,t as n,y as s}from"./styles-ByTLrRRH.js";const a=s`
+import{i as e,_ as t,s as o,x as i,b as l}from"./install-button.js";import{n,t as s}from"./styles-CYLWMyFc.js";const a=l`
   <svg
     version="1.1"
     id="Capa_1"
@@ -17,7 +17,7 @@ import{z as e,i as t,_ as o,s as i,x as l,t as n,y as s}from"./styles-ByTLrRRH.j
       />
     </g>
   </svg>
-`;let r=class extends i{render(){const e=(()=>{var e,t;const o=window.navigator.userAgent,i=(null===(t=null===(e=window.navigator)||void 0===e?void 0:e.userAgentData)||void 0===t?void 0:t.platform)||window.navigator.platform;return-1!==["macOS","Macintosh","MacIntel","MacPPC","Mac68K"].indexOf(i)?"Mac OS":-1!==["iPhone","iPad","iPod"].indexOf(i)?"iOS":-1!==["Win32","Win64","Windows","WinCE"].indexOf(i)?"Windows":/Android/.test(o)?"Android":/Linux/.test(i)?"Linux":null})();return l`
+`;let r=class extends o{render(){const e=(()=>{var e,t;const o=window.navigator.userAgent,i=(null===(t=null===(e=window.navigator)||void 0===e?void 0:e.userAgentData)||void 0===t?void 0:t.platform)||window.navigator.platform;return-1!==["macOS","Macintosh","MacIntel","MacPPC","Mac68K"].indexOf(i)?"Mac OS":-1!==["iPhone","iPad","iPod"].indexOf(i)?"iOS":-1!==["Win32","Win64","Windows","WinCE"].indexOf(i)?"Windows":/Android/.test(o)?"Android":/Linux/.test(i)?"Linux":null})();return i`
       <ew-dialog open @closed=${this._handleClose}>
         <div slot="headline">No port selected</div>
         <div slot="content">
@@ -38,7 +38,7 @@ import{z as e,i as t,_ as o,s as i,x as l,t as n,y as s}from"./styles-ByTLrRRH.j
               Make sure that the USB cable you use can be used for data and is
               not a power-only cable.
             </li>
-            ${"Linux"===e?l`
+            ${"Linux"===e?i`
                   <li>
                     If you are using a Linux flavor, make sure that your user is
                     part of the <code>dialout</code> group so it has permission
@@ -102,17 +102,17 @@ import{z as e,i as t,_ as o,s as i,x as l,t as n,y as s}from"./styles-ByTLrRRH.j
           </ol>
         </div>
         <div slot="actions">
-          ${this.doTryAgain?l`
+          ${this.doTryAgain?i`
                 <ew-text-button @click=${this.close}>Cancel</ew-text-button>
                 <ew-text-button @click=${this.tryAgain}>
                   Try Again
                 </ew-text-button>
-              `:l`
+              `:i`
                 <ew-text-button @click=${this.close}>Close</ew-text-button>
               `}
         </div>
       </ew-dialog>
-    `}tryAgain(){var e;this.close(),null===(e=this.doTryAgain)||void 0===e||e.call(this)}close(){this.shadowRoot.querySelector("ew-dialog").close()}async _handleClose(){this.parentNode.removeChild(this)}};r.styles=[e,t`
+    `}tryAgain(){var e;this.close(),null===(e=this.doTryAgain)||void 0===e||e.call(this)}close(){this.shadowRoot.querySelector("ew-dialog").close()}async _handleClose(){this.parentNode.removeChild(this)}};r.styles=[n,e`
       li + li,
       li > ul {
         margin-top: 8px;
@@ -126,4 +126,4 @@ import{z as e,i as t,_ as o,s as i,x as l,t as n,y as s}from"./styles-ByTLrRRH.j
         display: block;
         margin: 0.5em 0;
       }
-    `],r=o([n("ewt-no-port-picked-dialog")],r);const d=async e=>{const t=document.createElement("ewt-no-port-picked-dialog");return t.doTryAgain=e,document.body.append(t),!0};export{d as openNoPortPickedDialog};
+    `],r=t([s("ewt-no-port-picked-dialog")],r);const d=async e=>{const t=document.createElement("ewt-no-port-picked-dialog");return t.doTryAgain=e,document.body.append(t),!0};export{d as openNoPortPickedDialog};

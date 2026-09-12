@@ -63,8 +63,7 @@ export const flash = async (
     console.error(err);
     fireStateEvent({
       state: FlashStateType.ERROR,
-      message:
-        "Failed to initialize. Try resetting your device or holding the BOOT button while clicking INSTALL.",
+      message: `Failed to initialize: ${err.message || err}. Try resetting your device or holding the BOOT button while clicking INSTALL.`,
       details: { error: FlashError.FAILED_INITIALIZING, details: err },
     });
     await resetTransport(transport);
